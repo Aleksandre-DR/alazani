@@ -2,13 +2,17 @@ package com.example.alazani.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
-import org.springframework.data.annotation.Id;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.springframework.stereotype.Component;
 
 @Entity
-@AllArgsConstructor
-@Component
+@NoArgsConstructor
+@Getter
+@ToString
 public class Book {
     @Id
     private String id;
@@ -21,4 +25,11 @@ public class Book {
 
     @Column(nullable = false)
     private boolean isAvailable;
+
+    public Book(String id, String name, String author){
+        this.id = id;
+        this.name = name;
+        this.author = author;
+        this.isAvailable = true;
+    }
 }

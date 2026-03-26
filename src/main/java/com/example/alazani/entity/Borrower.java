@@ -3,15 +3,16 @@ package com.example.alazani.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Component;
+import lombok.*;
 
 @Entity
 @AllArgsConstructor
-@Component
+@NoArgsConstructor
+@ToString
+@Getter
 public class Borrower {
     @Id
-    private String personalId;
+    private String id;
 
     @Column(nullable = false)
     private String name;

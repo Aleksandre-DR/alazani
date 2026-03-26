@@ -2,14 +2,17 @@ package com.example.alazani.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Component;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Entity
 @AllArgsConstructor
-@Component
+@NoArgsConstructor
+@ToString
+@Getter
 public class BooksBorrowed {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
