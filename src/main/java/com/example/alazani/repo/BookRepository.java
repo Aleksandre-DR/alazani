@@ -1,20 +1,32 @@
 package com.example.alazani.repo;
 
 import com.example.alazani.entity.Book;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface BookRepository extends CrudRepository<Book, String> {
-    Optional<Book> findByNameIgnoreCase(String name);
+    boolean existsByNameIgnoreCase(String name);
+
+    List<Book> findByNameIgnoreCase(String name);
 
     boolean existsByNameIgnoreCaseAndIsAvailableTrue(String name);
 
-    Iterable<Book> findByAuthorIgnoreCase(String author);
+    List<Book> findByAuthorIgnoreCase(String author);
 
     long countByNameIgnoreCase(String name);
 
     boolean existsByAuthorIgnoreCase(String author);
+
+    List<Book> findAll();
+
+
+    @Modifying
+    @Query("update Book set isAvailable = ?2 where id = ?1")
+    void setAvailabilityOf(String bookId, boolean isAvailable);
 }

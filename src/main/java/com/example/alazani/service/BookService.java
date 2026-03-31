@@ -1,60 +1,118 @@
 package com.example.alazani.service;
 
 import com.example.alazani.entity.Book;
+import com.example.alazani.exception.BookNotInStoreException;
 import com.example.alazani.exception.ResourceNotFoundException;
 import com.example.alazani.repo.BookRepository;
-import org.springframework.stereotype.Component;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+
 
 @Service
 public class BookService {
     private BookRepository bookRepo;
 
-    private BookService(BookRepository bookRepo) {
+    public BookService(BookRepository bookRepo) {
         this.bookRepo = bookRepo;
     }
 
-    public boolean isBookInStore(String bookName) {
-        return bookRepo.findByNameIgnoreCase(bookName).isPresent();
+    public List<Book> findAll() {
+        return bookRepo.findAll();
     }
 
-    public boolean isBookAvailable(String bookName) {
-        if (!isBookInStore(bookName)) {
-            throw new ResourceNotFoundException("no such book in store");
+    public List<Book> findAllBy(String author) {
+        if (!isAuthorInStore(author)) {
+            throw new ResourceNotFoundException("author not in store");
         }
-        return bookRepo.existsByNameIgnoreCaseAndIsAvailableTrue(bookName);
+        return bookRepo.findByAuthorIgnoreCase(author);
+    }
+
+    public List<String> findDistincts() {
+        return bookRepo.findAll().stream()
+                .map(Book::getName)
+                .distinct()
+                .toList();
+    }
+
+    public List<String> findDistinctsBy(String author) {
+        if (!isAuthorInStore(author)) {
+            throw new ResourceNotFoundException("author not in store");
+        }
+
+        return bookRepo.findByAuthorIgnoreCase(author).stream()
+                .map(Book::getName)
+                .distinct()
+                .toList();
     }
 
     public long numberOfBook(String bookName) {
         if (!isBookInStore(bookName)) {
-            throw new ResourceNotFoundException("no such book in store");
+            throw new BookNotInStoreException();
         }
         return bookRepo.countByNameIgnoreCase(bookName);
+    }
+
+    public List<String> findDistinctAvailables() {
+        return bookRepo.findAll().stream()
+                .filter(Book::isAvailable)
+                .map(Book::getName)
+                .distinct()
+                .toList();
+    }
+
+    public List<String> findDistinctAvailablesBy(String author) {
+        if (!isAuthorInStore(author)) {
+            throw new ResourceNotFoundException("author not in store");
+        }
+        return bookRepo.findByAuthorIgnoreCase(author).stream()
+                .filter(Book::isAvailable)
+                .map(Book::getName)
+                .distinct()
+                .toList();
+    }
+
+    public boolean isBookInStore(String bookName) {
+        return bookRepo.existsByNameIgnoreCase(bookName);
+    }
+
+    public boolean isBookAvailable(String bookName) {
+        if (!isBookInStore(bookName)) {
+            throw new BookNotInStoreException();
+        }
+        return bookRepo.existsByNameIgnoreCaseAndIsAvailableTrue(bookName);
     }
 
     public boolean isAuthorInStore(String author) {
         return bookRepo.existsByAuthorIgnoreCase(author);
     }
 
-    public List<Book> booksByAuthor(String author) {
-        if (!isAuthorInStore(author)) {
-            throw new ResourceNotFoundException("no such outhor in store");
-        }
-
-        List<Book> books = new ArrayList<>();
-        Iterable<Book> bookIterable = bookRepo.findByAuthorIgnoreCase(author);
-        bookIterable.forEach(books::add);
-        return books;
+    public Book findById(String bookId) {
+        return bookRepo.findById(bookId)
+                .orElseThrow(() -> new BookNotInStoreException());
     }
 
-    public void fillDatabase() {
+    @Transactional           // because this is update-delete query call
+    public void setAvailabilityOf(String bookId, boolean isAvailable) {
+        bookRepo.setAvailabilityOf(bookId, isAvailable);
+    }
+
+    public Book findAvailableByName(String bookName) {
+        if (!isBookInStore(bookName)) {
+            throw new BookNotInStoreException();
+        }
+
+        return bookRepo.findByNameIgnoreCase(bookName).stream()
+                .filter(Book::isAvailable)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("book not free"));
+    }
+
+    public void fillTable() {
         String bookFilePath = "src/main/resources/books.txt";
 
         try (var br = new BufferedReader(new FileReader(bookFilePath))) {
@@ -72,6 +130,9 @@ public class BookService {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
+    public void deleteTable() {
+        bookRepo.deleteAll();
     }
 }

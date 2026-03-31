@@ -1,28 +1,40 @@
 package com.example.alazani.service;
 
 import com.example.alazani.entity.Borrower;
+import com.example.alazani.exception.ResourceAlreadyExistsException;
 import com.example.alazani.exception.ResourceNotFoundException;
 import com.example.alazani.repo.BorrowerRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class BorrowerService {
 
     private BorrowerRepository borrowerRepo;
 
-    private BorrowerService(BorrowerRepository borrowerRepo) {
+    public BorrowerService(BorrowerRepository borrowerRepo) {
         this.borrowerRepo = borrowerRepo;
     }
 
-    public void addToDatabase(Borrower borrower) {
-        if (borrowerRepo.existsById(borrower.getId())) return;
+    public List<Borrower> findAllBorrowers() {
+        return borrowerRepo.findAll();
+    }
+
+    public void addToTable(Borrower borrower) {
+        if (borrowerRepo.existsById(borrower.getId())) {
+            throw new ResourceAlreadyExistsException("borrower already exists");
+        }
         borrowerRepo.save(borrower);
     }
 
-    public void deleteFromDatabase(String borrowerId){
-        if(!borrowerRepo.existsById(borrowerId)){
-            throw new ResourceNotFoundException("no such borrower in database");
-        }
-        borrowerRepo.deleteById(borrowerId);
+    public void deleteFromTable(String borrowerId) {
+        Borrower borrower = findById(borrowerId);
+        borrowerRepo.delete(borrower);
+    }
+
+    public Borrower findById(String borrowerId) {
+        return borrowerRepo.findById(borrowerId)
+                .orElseThrow(() -> new ResourceNotFoundException("borrower not in store"));
     }
 }

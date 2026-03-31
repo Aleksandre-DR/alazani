@@ -9,3 +9,27 @@
 3456388/the brothers karamazov/Fyodor Dostoevsky
 1002823/the odyssey/Homer
 2846782/zebulon/Jemal Karchkhadze
+8345839/igi/Jemal Karchkhadze
+3475349/the godfather/Mario Puzo
+8347593/the idiot/Fyodor Dostoevsky
+4987439/sherlock holmes/Arthur Conan Doyle
+1094823/traveler novels/Ilia chavchavadze
+2903842/don quixote/Miguel de Cervantes
+3845988/the master and margarita/Mikhail Bulgakov
+0938509/pride and prejudice/Jane Austen
+4535334/crime and punishment/Fyodor Dostoevsky
+5687545/1984/George Orwell
+4954990/pride and prejudice/Jane Austen
+3455432/the catcher in the rye/Jerome Salinger
+8456045/igi/Jemal Karchkhadze
+9283472/jane eyre/Charlotte Brontë
+9035805/the master and margarita/Mikhail Bulgakov
+6545654/animal farm/George Orwell
+8346583/the brothers karamazov/Fyodor Dostoevsky
+2347543/sherlock holmes/Arthur Conan Doyle
+395t058/traveler novels/Ilia chavchavadze
+2345352/don quixote/Miguel de Cervantes
+9827534/the master and margarita/Mikhail Bulgakov
+3984759/pride and prejudice/Jane Austen
+2984554/crime and punishment/Fyodor Dostoevsky
+2384932/1984/George Orwell
