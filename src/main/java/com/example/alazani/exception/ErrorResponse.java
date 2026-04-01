@@ -6,14 +6,13 @@ import lombok.ToString;
 import java.time.LocalDate;
 
 @Getter
+@ToString
 public class ErrorResponse {
     private String message;
-    private int status;
     private LocalDate timeStamp;
 
-    public ErrorResponse(String message, int status){
+    public ErrorResponse(String message){
         this.message = message;
-        this.status = status;
         this.timeStamp = LocalDate.now();
     }
 }

@@ -1,8 +1,6 @@
 package com.example.alazani.service;
 
 import com.example.alazani.entity.Borrower;
-import com.example.alazani.exception.ResourceAlreadyExistsException;
-import com.example.alazani.exception.ResourceNotFoundException;
 import com.example.alazani.repo.BorrowerRepository;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +21,7 @@ public class BorrowerService {
 
     public void addToTable(Borrower borrower) {
         if (borrowerRepo.existsById(borrower.getId())) {
-            throw new ResourceAlreadyExistsException("borrower already exists");
+            throw new RuntimeException("borrower already exists");
         }
         borrowerRepo.save(borrower);
     }
@@ -35,6 +33,6 @@ public class BorrowerService {
 
     public Borrower findById(String borrowerId) {
         return borrowerRepo.findById(borrowerId)
-                .orElseThrow(() -> new ResourceNotFoundException("borrower not in store"));
+                .orElseThrow(() -> new RuntimeException("borrower not in store"));
     }
 }

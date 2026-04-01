@@ -2,7 +2,8 @@ package com.example.alazani.controller;
 
 import com.example.alazani.entity.Borrower;
 import com.example.alazani.service.BorrowerService;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,24 +18,28 @@ public class BorrowerController {
         this.borrowerService = borrowerService;
     }
 
+    private static final String idNotEmpty = "borrower id can not be empty";
+
     @GetMapping("/all")
-    private ResponseEntity<List<Borrower>> findAllBorrowers(){
+    private ResponseEntity<List<Borrower>> findAllBorrowers() {
         List<Borrower> borrowers = borrowerService.findAllBorrowers();
         return ResponseEntity.ok(borrowers);
     }
 
     @PostMapping("/add")
-    public void addToTable(@RequestBody @NotEmpty Borrower borrower) {
+    public ResponseEntity<String> addToTable(@RequestBody @Valid Borrower borrower) {
         borrowerService.addToTable(borrower);
+        return ResponseEntity.ok("added successfully");
     }
 
     @PostMapping("/delete")
-    public void deleteFromTable(@RequestParam @NotEmpty String borrowerId) {
+    public ResponseEntity<String> deleteFromTable(@RequestParam @NotBlank(message = idNotEmpty) String borrowerId) {
         borrowerService.deleteFromTable(borrowerId);
+        return ResponseEntity.ok("deleted successfully");
     }
 
     @GetMapping("/get")
-    public ResponseEntity<Borrower> findById(@RequestParam @NotEmpty String borrowerId) {
+    public ResponseEntity<Borrower> findById(@RequestParam @NotBlank(message = idNotEmpty) String borrowerId) {
         Borrower borrower = borrowerService.findById(borrowerId);
         return ResponseEntity.ok(borrower);
     }

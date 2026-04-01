@@ -1,8 +1,8 @@
 package com.example.alazani.service;
 
 import com.example.alazani.entity.Book;
+import com.example.alazani.exception.AuthorNotInStoreException;
 import com.example.alazani.exception.BookNotInStoreException;
-import com.example.alazani.exception.ResourceNotFoundException;
 import com.example.alazani.repo.BookRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -27,7 +27,7 @@ public class BookService {
 
     public List<Book> findAllBy(String author) {
         if (!isAuthorInStore(author)) {
-            throw new ResourceNotFoundException("author not in store");
+            throw new AuthorNotInStoreException();
         }
         return bookRepo.findByAuthorIgnoreCase(author);
     }
@@ -41,7 +41,7 @@ public class BookService {
 
     public List<String> findDistinctsBy(String author) {
         if (!isAuthorInStore(author)) {
-            throw new ResourceNotFoundException("author not in store");
+            throw new AuthorNotInStoreException();
         }
 
         return bookRepo.findByAuthorIgnoreCase(author).stream()
@@ -67,7 +67,7 @@ public class BookService {
 
     public List<String> findDistinctAvailablesBy(String author) {
         if (!isAuthorInStore(author)) {
-            throw new ResourceNotFoundException("author not in store");
+            throw new AuthorNotInStoreException();
         }
         return bookRepo.findByAuthorIgnoreCase(author).stream()
                 .filter(Book::isAvailable)

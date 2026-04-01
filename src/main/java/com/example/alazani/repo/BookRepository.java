@@ -7,7 +7,6 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface BookRepository extends CrudRepository<Book, String> {
@@ -24,7 +23,6 @@ public interface BookRepository extends CrudRepository<Book, String> {
     boolean existsByAuthorIgnoreCase(String author);
 
     List<Book> findAll();
-
 
     @Modifying
     @Query("update Book set isAvailable = ?2 where id = ?1")
