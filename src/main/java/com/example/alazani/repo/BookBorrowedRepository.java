@@ -4,6 +4,7 @@ import com.example.alazani.entity.Book;
 import com.example.alazani.entity.BookBorrowed;
 import com.example.alazani.entity.Borrower;
 import jakarta.transaction.Transactional;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,7 +13,6 @@ import java.util.Optional;
 
 @Repository
 public interface BookBorrowedRepository extends CrudRepository<BookBorrowed, Long> {
-    boolean existsByBook(Book book);
 
     boolean existsByBorrower(Borrower borrower);
 
@@ -20,6 +20,7 @@ public interface BookBorrowedRepository extends CrudRepository<BookBorrowed, Lon
 
     Optional<BookBorrowed> findByBook(Book book);
 
+    @NullMarked
     List<BookBorrowed> findAll();
 
     @Transactional

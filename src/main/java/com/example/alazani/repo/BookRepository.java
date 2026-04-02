@@ -1,6 +1,7 @@
 package com.example.alazani.repo;
 
 import com.example.alazani.entity.Book;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -10,6 +11,7 @@ import java.util.List;
 
 @Repository
 public interface BookRepository extends CrudRepository<Book, String> {
+
     boolean existsByNameIgnoreCase(String name);
 
     List<Book> findByNameIgnoreCase(String name);
@@ -22,6 +24,7 @@ public interface BookRepository extends CrudRepository<Book, String> {
 
     boolean existsByAuthorIgnoreCase(String author);
 
+    @NullMarked
     List<Book> findAll();
 
     @Modifying

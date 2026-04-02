@@ -12,8 +12,8 @@ import java.util.List;
 @Component
 public class NotifyBorrowers {
 
-    private BookBorrowedService bookBorrowedService;
-    private BlackListService blackListService;
+    private final BookBorrowedService bookBorrowedService;
+    private final BlackListService blackListService;
 
     public NotifyBorrowers(BookBorrowedService bookBorrowedService,
                            BlackListService blackListService) {
@@ -21,7 +21,7 @@ public class NotifyBorrowers {
         this.blackListService = blackListService;
     }
 
-    @Scheduled(cron = "0 0 9 * * *")            // method is run everyday at 09:00 am
+    @Scheduled(cron = "0 0 9 * * *")            // method is run every day at 09:00 am
     public void checkBorrowersClosenessToDeadline() {
         notifyCloseToDeadliners();
         notifyOnDeadliners();

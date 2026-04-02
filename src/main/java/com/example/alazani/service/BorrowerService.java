@@ -9,7 +9,7 @@ import java.util.List;
 @Service
 public class BorrowerService {
 
-    private BorrowerRepository borrowerRepo;
+    private final BorrowerRepository borrowerRepo;
 
     public BorrowerService(BorrowerRepository borrowerRepo) {
         this.borrowerRepo = borrowerRepo;
