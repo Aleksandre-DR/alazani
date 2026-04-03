@@ -15,7 +15,7 @@ import java.util.List;
 
 @Service
 public class BookService {
-    private BookRepository bookRepo;
+    private final BookRepository bookRepo;
 
     public BookService(BookRepository bookRepo) {
         this.bookRepo = bookRepo;
@@ -93,7 +93,7 @@ public class BookService {
 
     public Book findById(String bookId) {
         return bookRepo.findById(bookId)
-                .orElseThrow(() -> new BookNotInStoreException());
+                .orElseThrow(BookNotInStoreException::new);
     }
 
     @Transactional           // because this is update-delete query call
@@ -119,10 +119,10 @@ public class BookService {
             String oneLine;
 
             while ((oneLine = br.readLine()) != null) {
-                String[] splittedLine = oneLine.split("/");
-                String id = splittedLine[0];
-                String name = splittedLine[1];
-                String author = splittedLine[2];
+                String[] splitLine = oneLine.split("/");
+                String id = splitLine[0];
+                String name = splitLine[1];
+                String author = splitLine[2];
 
                 if (bookRepo.existsById(id)) continue;
                 bookRepo.save(new Book(id, name, author));

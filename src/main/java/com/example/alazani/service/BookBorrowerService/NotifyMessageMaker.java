@@ -7,12 +7,13 @@ public class NotifyMessageMaker {
     private NotifyMessageMaker(){
     }
 
+
     static String closeToDeadlineMessage(BookBorrowed borrowing) {
         String borrowerName = borrowing.getBorrower().getName();
         String bookName = borrowing.getBook().getName();
         int daysLeft = borrowing.getBorrowDate().until(borrowing.getReturnDate()).getDays();
 
-        return "hello " + borrowerName + ", we want to remaind you that the book you " +
+        return "hello " + borrowerName + ", we want to remained you that the book you " +
                 "borrowed \"" + bookName + "\" should be returned in " + daysLeft + " days";
     }
 

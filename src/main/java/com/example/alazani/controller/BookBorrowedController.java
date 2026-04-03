@@ -15,7 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/borrowing")
 public class BookBorrowedController {
-    private BookBorrowedService bookBorrowedService;
+    private final BookBorrowedService bookBorrowedService;
 
     public BookBorrowedController(BookBorrowedService bookBorrowedService) {
         this.bookBorrowedService = bookBorrowedService;

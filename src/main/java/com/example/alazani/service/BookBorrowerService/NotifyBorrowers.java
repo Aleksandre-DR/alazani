@@ -3,7 +3,6 @@ package com.example.alazani.service.BookBorrowerService;
 import com.example.alazani.entity.BlackList;
 import com.example.alazani.entity.BookBorrowed;
 import com.example.alazani.service.BlackListService;
-import com.example.alazani.service.BookService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -13,19 +12,16 @@ import java.util.List;
 @Component
 public class NotifyBorrowers {
 
-    private BookBorrowedService bookBorrowedService;
-    private BlackListService blackListService;
-    private BookService bookService;
+    private final BookBorrowedService bookBorrowedService;
+    private final BlackListService blackListService;
 
     public NotifyBorrowers(BookBorrowedService bookBorrowedService,
-                           BlackListService blackListService,
-                           BookService bookService) {
+                           BlackListService blackListService) {
         this.bookBorrowedService = bookBorrowedService;
         this.blackListService = blackListService;
-        this.bookService = bookService;
     }
 
-    @Scheduled(cron = "0 0 9 * * *")            // method is run everyday at 09:00 am
+    @Scheduled(cron = "0 0 9 * * *")            // method is run every day at 09:00 am
     public void checkBorrowersClosenessToDeadline() {
         notifyCloseToDeadliners();
         notifyOnDeadliners();
@@ -72,7 +68,6 @@ public class NotifyBorrowers {
         borrowerId = borrowing.getBorrower().getId();
 
         bookBorrowedService.deleteFromTable(bookId);
-        bookService.setAvailabilityOf(bookId, false);       // book is still taken
         BlackList newRow = new BlackList(bookId, bookName, borrowerId);
         blackListService.addToTable(newRow);
     }

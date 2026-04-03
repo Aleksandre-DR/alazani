@@ -61,13 +61,13 @@ public class GlobalExceptionHandler {
         return ex.getAllErrors().stream()
                 .map(MessageSourceResolvable::getDefaultMessage)
                 .findFirst()
-                .orElse("undifined validation error");
+                .orElse("undefined validation error");
     }
 
     private String getValidationExceptionMessage(MethodArgumentNotValidException ex) {
         return ex.getAllErrors().stream()
                 .map(MessageSourceResolvable::getDefaultMessage)
                 .findFirst()
-                .orElse("undifined validation error");
+                .orElse("undefined validation error");
     }
 }

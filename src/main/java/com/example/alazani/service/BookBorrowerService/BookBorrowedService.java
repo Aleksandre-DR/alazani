@@ -16,10 +16,10 @@ import java.util.List;
 @Service
 public class BookBorrowedService {
 
-    private BookBorrowedRepository bookBorrowedRepo;
-    private BookService bookService;
-    private BorrowerService borrowerService;
-    private BlackListService blackListService;
+    private final BookBorrowedRepository bookBorrowedRepo;
+    private final BookService bookService;
+    private final BorrowerService borrowerService;
+    private final BlackListService blackListService;
 
     public BookBorrowedService(BookBorrowedRepository booksBorrowedRepo,
                                BookService bookService, BorrowerService borrowerService,

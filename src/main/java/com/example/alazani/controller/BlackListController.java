@@ -11,7 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/blacklist")
 public class BlackListController {
-    private BlackListService blackListService;
+    private final BlackListService blackListService;
 
     public BlackListController(BlackListService blackListService) {
         this.blackListService = blackListService;

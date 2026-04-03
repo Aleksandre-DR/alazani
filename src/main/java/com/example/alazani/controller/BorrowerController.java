@@ -12,7 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/borrower")
 public class BorrowerController {
-    private BorrowerService borrowerService;
+    private final BorrowerService borrowerService;
 
     private BorrowerController(BorrowerService borrowerService) {
         this.borrowerService = borrowerService;

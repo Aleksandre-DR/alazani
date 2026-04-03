@@ -9,7 +9,7 @@ import java.util.List;
 
 @Service
 public class BlackListService {
-    private BlackListRepository blackListRepo;
+    private final BlackListRepository blackListRepo;
 
     public BlackListService(BlackListRepository blackListRepo) {
         this.blackListRepo = blackListRepo;
