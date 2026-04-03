@@ -1,6 +1,9 @@
 package com.example.alazani.service.BookBorrowerService;
 
+import com.example.alazani.entity.BlackList;
 import com.example.alazani.entity.BookBorrowed;
+import com.example.alazani.service.BlackListService;
+import com.example.alazani.service.BookService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -11,37 +14,67 @@ import java.util.List;
 public class NotifyBorrowers {
 
     private BookBorrowedService bookBorrowedService;
+    private BlackListService blackListService;
+    private BookService bookService;
 
-    public NotifyBorrowers(BookBorrowedService bookBorrowedService) {
+    public NotifyBorrowers(BookBorrowedService bookBorrowedService,
+                           BlackListService blackListService,
+                           BookService bookService) {
         this.bookBorrowedService = bookBorrowedService;
+        this.blackListService = blackListService;
+        this.bookService = bookService;
     }
 
     @Scheduled(cron = "0 0 9 * * *")            // method is run everyday at 09:00 am
     public void checkBorrowersClosenessToDeadline() {
         notifyCloseToDeadliners();
         notifyOnDeadliners();
+        notifyAfterDeadliners();
     }
 
     private void notifyCloseToDeadliners() {
         List<BookBorrowed> borrowings = borrowingsCloseToDeadline();
-        String bookName;
-        int daysLeft;
+        String notifyMessage;
 
         for (var borrowing : borrowings) {
-            bookName = borrowing.getBook().getName();
-            daysLeft = borrowing.getBorrowDate().until(borrowing.getReturnDate()).getDays();
-            borrowing.getBorrower().notifyCloseToDeadline(bookName, daysLeft);
+            notifyMessage = NotifyMessageMaker.closeToDeadlineMessage(borrowing);
+            borrowing.getBorrower().notify(notifyMessage);
         }
     }
 
     private void notifyOnDeadliners() {
         List<BookBorrowed> borrowings = borrowingsOnDeadline();
-        String bookName;
+        String notifyMessage;
 
         for (var borrowing : borrowings) {
-            bookName = borrowing.getBook().getName();
-            borrowing.getBorrower().notifyOnDeadline(bookName);
+            notifyMessage = NotifyMessageMaker.onDeadlineMessage(borrowing);
+            borrowing.getBorrower().notify(notifyMessage);
         }
+    }
+
+    private void notifyAfterDeadliners() {
+        List<BookBorrowed> borrowings = borrowingsAfterDeadline();
+        String notifyMessage;
+
+        for (var borrowing : borrowings) {
+            notifyMessage = NotifyMessageMaker.afterDeadlineMessage(borrowing);
+
+            borrowing.getBorrower().notify(notifyMessage);
+            manageAccordingTables(borrowing);
+        }
+    }
+
+    private void manageAccordingTables(BookBorrowed borrowing) {
+        String bookName, bookId, borrowerId;
+
+        bookName = borrowing.getBook().getName();
+        bookId = borrowing.getBook().getId();
+        borrowerId = borrowing.getBorrower().getId();
+
+        bookBorrowedService.deleteFromTable(bookId);
+        bookService.setAvailabilityOf(bookId, false);       // book is still taken
+        BlackList newRow = new BlackList(bookId, bookName, borrowerId);
+        blackListService.addToTable(newRow);
     }
 
     private List<BookBorrowed> borrowingsCloseToDeadline() {
@@ -59,4 +92,13 @@ public class NotifyBorrowers {
                 .filter(bb -> bb.getReturnDate().isEqual(today))
                 .toList();          // deadlineDate = today
     }
+
+    private List<BookBorrowed> borrowingsAfterDeadline() {
+        LocalDate today = LocalDate.now();
+
+        return bookBorrowedService.findAllBorrowings().stream()
+                .filter(bb -> bb.getReturnDate().isAfter(today))
+                .toList();          // deadlineDate < today
+    }
+
 }

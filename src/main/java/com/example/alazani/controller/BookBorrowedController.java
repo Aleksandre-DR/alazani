@@ -1,9 +1,11 @@
 package com.example.alazani.controller;
 
+import com.example.alazani.dto.BorrowRequest;
 import com.example.alazani.entity.Book;
 import com.example.alazani.entity.BookBorrowed;
 import com.example.alazani.service.BookBorrowerService.BookBorrowedService;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,40 +17,46 @@ import java.util.List;
 public class BookBorrowedController {
     private BookBorrowedService bookBorrowedService;
 
-    private BookBorrowedController(BookBorrowedService bookBorrowedService){
+    public BookBorrowedController(BookBorrowedService bookBorrowedService) {
         this.bookBorrowedService = bookBorrowedService;
     }
 
+    private static final String bookIdNotEmpty = "book id can not be empty";
+    private static final String borrowerIdNotEmpty = "borrower id can not be empty";
+
+
     @GetMapping("/all")
-    public ResponseEntity<List<BookBorrowed>> findAllBorrowings(){
+    public ResponseEntity<List<BookBorrowed>> findAllBorrowings() {
         List<BookBorrowed> borrowings = bookBorrowedService.findAllBorrowings();
         return ResponseEntity.ok(borrowings);
     }
 
     @PostMapping("/add")
-    private void saveToTable(@RequestParam @NotEmpty String bookName,
-                             @RequestParam @NotEmpty String borrowerId){
-        bookBorrowedService.saveToTable(bookName, borrowerId);
+    public ResponseEntity<String> saveToTable(@Valid @RequestBody BorrowRequest request) {
+        bookBorrowedService.saveToTable(request.getBookName(), request.getBorrowerId());
+        return ResponseEntity.ok("saved successfully");
     }
 
     @PostMapping("/delete")
-    public void deleteFromTable(@RequestParam @NotEmpty String bookId){
+    public ResponseEntity<String> deleteFromTable(@RequestParam @NotBlank(message = bookIdNotEmpty) String bookId) {
         bookBorrowedService.deleteFromTable(bookId);
+        return ResponseEntity.ok("deleted successfully");
     }
 
     @PostMapping("/delete-all")
-    public void deleteAllFromTable(){
+    public ResponseEntity<String> deleteAllFromTable() {
         bookBorrowedService.deleteAll();
+        return ResponseEntity.ok("deleted all table successfully");
     }
 
     @GetMapping("/books-borrowed-by")
-    public ResponseEntity<List<Book>> booksBorrowedBy(@RequestParam @NotEmpty String borrowerId){
+    public ResponseEntity<List<Book>> booksBorrowedBy(@RequestParam @NotBlank(message = borrowerIdNotEmpty) String borrowerId) {
         List<Book> books = bookBorrowedService.booksBorrowedBy(borrowerId);
         return ResponseEntity.ok(books);
     }
 
     @GetMapping("/borrow-date")
-    public ResponseEntity<LocalDate> bookBorrowDate(@RequestParam @NotEmpty String bookId){
+    public ResponseEntity<LocalDate> bookBorrowDate(@RequestParam @NotBlank(message = bookIdNotEmpty) String bookId) {
         LocalDate borrowDate = bookBorrowedService.bookBorrowDate(bookId);
         return ResponseEntity.ok(borrowDate);
     }
