@@ -26,12 +26,22 @@ public class NotifyMessageMaker {
                 "your future borrowing attempts will be restricted.";
     }
 
-    static String afterDeadlineMessage(BookBorrowed borrowing) {
+    static String DeadlineJustCrossMessage(BookBorrowed borrowing) {
         String borrowerName = borrowing.getBorrower().getName();
         String bookName = borrowing.getBook().getName();
 
         return "hello " + borrowerName + ", we want to inform you that you crossed the " +
                 "return deadline for the book \"" + bookName + "\". your future borrowing " +
-                "attempts will be restricted until you return all the borrowed books.";
+                "attempts will be restricted until you return all deadline-crossed books.";
     }
+
+    static String DeadlineLongAgoCrossMessage(BookBorrowed borrowing) {
+        String borrowerName = borrowing.getBorrower().getName();
+        String bookName = borrowing.getBook().getName();
+
+        return "hello " + borrowerName + ", please return the book \"" + bookName +
+                "\". your future borrowing attempts will be restricted until " +
+                "you return all deadline-crossed books.";
+    }
+
 }

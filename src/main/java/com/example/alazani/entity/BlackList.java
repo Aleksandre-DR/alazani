@@ -17,14 +17,14 @@ import lombok.ToString;
 @Getter
 public class BlackList {
     @Id
-    @Pattern(regexp = "\\d", message = "book id must contain only digits")
+    @Pattern(regexp = "\\d+", message = "book id must contain only digits")
     @Size(min = 7, max = 7, message = "book id must have exactly 7 digits")
     private String bookId;
 
     @NotBlank(message = "book name is required")
     private String bookName;
 
-    @Pattern(regexp = "\\d", message = "borrower id must contain only digits")
+    @Pattern(regexp = "\\d+", message = "borrower id must contain only digits")
     @Size(min = 11, max = 11, message = "borrower id must have exactly 11 digits")
     private String borrowerId;
 }

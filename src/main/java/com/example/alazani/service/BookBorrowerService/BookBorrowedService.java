@@ -1,5 +1,6 @@
 package com.example.alazani.service.BookBorrowerService;
 
+import com.example.alazani.dto.CompressedBorrow;
 import com.example.alazani.entity.Book;
 import com.example.alazani.entity.BookBorrowed;
 import com.example.alazani.entity.Borrower;
@@ -32,6 +33,22 @@ public class BookBorrowedService {
 
     public List<BookBorrowed> findAllBorrowings() {
         return bookBorrowedRepo.findAll();
+    }
+
+    public List<CompressedBorrow> findAllBorrowingsCompressed() {
+        return bookBorrowedRepo.findAll().stream()
+                .map(this::compressedBorrowMaker)
+                .toList();
+    }
+
+    private CompressedBorrow compressedBorrowMaker(BookBorrowed borrowing) {
+        String bookId = borrowing.getBook().getId();
+        String bookName = borrowing.getBook().getName();
+        String borrowerId = borrowing.getBorrower().getId();
+        String borrowerName = borrowing.getBorrower().getName();
+
+        return new CompressedBorrow(bookId, bookName, borrowerId, borrowerName,
+                borrowing.getBorrowDate(), borrowing.getReturnDate());
     }
 
     public void saveToTable(String bookName, String borrowerId) {

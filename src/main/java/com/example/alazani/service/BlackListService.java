@@ -10,9 +10,11 @@ import java.util.List;
 @Service
 public class BlackListService {
     private final BlackListRepository blackListRepo;
+    private final BookService bookService;
 
-    public BlackListService(BlackListRepository blackListRepo) {
+    public BlackListService(BlackListRepository blackListRepo, BookService bookService) {
         this.blackListRepo = blackListRepo;
+        this.bookService = bookService;
     }
 
     public boolean existsByBorrowerId(String borrowerId) {
@@ -30,6 +32,7 @@ public class BlackListService {
             throw new RuntimeException("book not in black list");
         }
         blackListRepo.deleteById(bookId);
+        bookService.setAvailabilityOf(bookId, true);   // after returning, book got free
     }
 
     public List<BlackList> findAll() {

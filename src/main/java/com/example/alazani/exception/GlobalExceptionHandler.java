@@ -51,9 +51,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> undefinedException(Exception ex) {
-        String message = "undefined exception: " + ex.getMessage();
-
-        ErrorResponse error = new ErrorResponse(message);
+        ErrorResponse error = new ErrorResponse(ex.getMessage());
         return ResponseEntity.internalServerError().body(error);
     }
 

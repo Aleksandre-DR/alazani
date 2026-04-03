@@ -117,22 +117,36 @@ public class BookService {
 
         try (var br = new BufferedReader(new FileReader(bookFilePath))) {
             String oneLine;
+            Book book;
 
             while ((oneLine = br.readLine()) != null) {
-                String[] splitLine = oneLine.split("/");
-                String id = splitLine[0];
-                String name = splitLine[1];
-                String author = splitLine[2];
+                book = bookMaker(oneLine);
 
-                if (bookRepo.existsById(id)) continue;
-                bookRepo.save(new Book(id, name, author));
+                if (bookRepo.existsById(book.getId())) continue;
+                bookRepo.save(book);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void deleteTable() {
+    private Book bookMaker(String bookAsString){
+        String[] splitLine = bookAsString.split("/");
+        String id = splitLine[0];
+        String name = splitLine[1];
+        String author = splitLine[2];
+
+        return new Book(id, name, author);
+    }
+
+    public void deleteFromTable(String bookId) {
+        if (!bookRepo.existsById(bookId)) {
+            throw new BookNotInStoreException();
+        }
+        bookRepo.deleteById(bookId);
+    }
+
+    public void deleteAllFromTable() {
         bookRepo.deleteAll();
     }
 }

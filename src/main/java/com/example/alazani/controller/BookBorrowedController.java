@@ -1,6 +1,7 @@
 package com.example.alazani.controller;
 
 import com.example.alazani.dto.BorrowRequest;
+import com.example.alazani.dto.CompressedBorrow;
 import com.example.alazani.entity.Book;
 import com.example.alazani.entity.BookBorrowed;
 import com.example.alazani.service.BookBorrowerService.BookBorrowedService;
@@ -28,6 +29,12 @@ public class BookBorrowedController {
     @GetMapping("/all")
     public ResponseEntity<List<BookBorrowed>> findAllBorrowings() {
         List<BookBorrowed> borrowings = bookBorrowedService.findAllBorrowings();
+        return ResponseEntity.ok(borrowings);
+    }
+
+    @GetMapping("/all-compressed")
+    public ResponseEntity<List<CompressedBorrow>> findAllBorrowingsCompressed() {
+        List<CompressedBorrow> borrowings = bookBorrowedService.findAllBorrowingsCompressed();
         return ResponseEntity.ok(borrowings);
     }
 

@@ -21,11 +21,12 @@ public class NotifyBorrowers {
         this.blackListService = blackListService;
     }
 
-    @Scheduled(cron = "0 0 9 * * *")            // method is run every day at 09:00 am
+    @Scheduled(cron = "0 0 9 * * *")            // method is run every day at 09:00
     public void checkBorrowersClosenessToDeadline() {
         notifyCloseToDeadliners();
         notifyOnDeadliners();
-        notifyAfterDeadliners();
+        notifyDeadlineJustCrossers();
+        notifyDeadlineLongAgoCrossers();
     }
 
     private void notifyCloseToDeadliners() {
@@ -48,36 +49,47 @@ public class NotifyBorrowers {
         }
     }
 
-    private void notifyAfterDeadliners() {
-        List<BookBorrowed> borrowings = borrowingsAfterDeadline();
+    private void notifyDeadlineJustCrossers() {
+        List<BookBorrowed> borrowings = borrowingsJustCrossedDeadline();
         String notifyMessage;
 
         for (var borrowing : borrowings) {
-            notifyMessage = NotifyMessageMaker.afterDeadlineMessage(borrowing);
+            notifyMessage = NotifyMessageMaker.DeadlineJustCrossMessage(borrowing);
 
             borrowing.getBorrower().notify(notifyMessage);
-            manageAccordingTables(borrowing);
+            saveToBlackListTable(borrowing);
         }
     }
 
-    private void manageAccordingTables(BookBorrowed borrowing) {
+    private void notifyDeadlineLongAgoCrossers(){
+        List<BookBorrowed> borrowings = borrowingsLongAgoCrossedDeadline();
+        String notifyMessage;
+
+        for(var borrowing : borrowings){
+            notifyMessage = NotifyMessageMaker.DeadlineLongAgoCrossMessage(borrowing);
+            borrowing.getBorrower().notify(notifyMessage);
+        }
+    }
+
+    private void saveToBlackListTable(BookBorrowed borrowing) {
         String bookName, bookId, borrowerId;
 
         bookName = borrowing.getBook().getName();
         bookId = borrowing.getBook().getId();
         borrowerId = borrowing.getBorrower().getId();
 
-        bookBorrowedService.deleteFromTable(bookId);
         BlackList newRow = new BlackList(bookId, bookName, borrowerId);
         blackListService.addToTable(newRow);
     }
 
     private List<BookBorrowed> borrowingsCloseToDeadline() {
-        LocalDate sixDaysAfterToday = LocalDate.now().plusDays(6);
+        LocalDate today = LocalDate.now();
+        LocalDate sixDaysAfterToday = today.plusDays(6);
 
         return bookBorrowedService.findAllBorrowings().stream()
                 .filter(bb -> bb.getReturnDate().isBefore(sixDaysAfterToday))
-                .toList();          // deadlineDate - today <= 5 days
+                .filter(bb -> bb.getReturnDate().isAfter(today))
+                .toList();          // deadlineDate in 1..4 days
     }
 
     private List<BookBorrowed> borrowingsOnDeadline() {
@@ -88,12 +100,20 @@ public class NotifyBorrowers {
                 .toList();          // deadlineDate = today
     }
 
-    private List<BookBorrowed> borrowingsAfterDeadline() {
-        LocalDate today = LocalDate.now();
+    private List<BookBorrowed> borrowingsJustCrossedDeadline() {
+        LocalDate yesterday = LocalDate.now().minusDays(1);
 
         return bookBorrowedService.findAllBorrowings().stream()
-                .filter(bb -> bb.getReturnDate().isAfter(today))
-                .toList();          // deadlineDate < today
+                .filter(bb -> bb.getReturnDate().isEqual(yesterday))
+                .toList();          // deadlineDate = yesterday
+    }
+
+    private List<BookBorrowed> borrowingsLongAgoCrossedDeadline(){
+        LocalDate yesterday = LocalDate.now().minusDays(1);
+
+        return bookBorrowedService.findAllBorrowings().stream()
+                .filter(bb -> bb.getReturnDate().isBefore(yesterday))
+                .toList();          // deadlineDate < yesterday
     }
 
 }
