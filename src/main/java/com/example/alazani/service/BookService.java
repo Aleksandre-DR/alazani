@@ -29,7 +29,7 @@ public class BookService {
         if (!isAuthorInStore(author)) {
             throw new AuthorNotInStoreException();
         }
-        return bookRepo.findByAuthorIgnoreCase(author);
+        return bookRepo.findByAuthor(author);
     }
 
     public List<String> findDistincts() {
@@ -44,7 +44,7 @@ public class BookService {
             throw new AuthorNotInStoreException();
         }
 
-        return bookRepo.findByAuthorIgnoreCase(author).stream()
+        return bookRepo.findByAuthor(author).stream()
                 .map(Book::getName)
                 .distinct()
                 .toList();
@@ -54,7 +54,7 @@ public class BookService {
         if (!isBookInStore(bookName)) {
             throw new BookNotInStoreException();
         }
-        return bookRepo.countByNameIgnoreCase(bookName);
+        return bookRepo.countByName(bookName);
     }
 
     public List<String> findDistinctAvailables() {
@@ -69,7 +69,7 @@ public class BookService {
         if (!isAuthorInStore(author)) {
             throw new AuthorNotInStoreException();
         }
-        return bookRepo.findByAuthorIgnoreCase(author).stream()
+        return bookRepo.findByAuthor(author).stream()
                 .filter(Book::isAvailable)
                 .map(Book::getName)
                 .distinct()
@@ -77,18 +77,18 @@ public class BookService {
     }
 
     public boolean isBookInStore(String bookName) {
-        return bookRepo.existsByNameIgnoreCase(bookName);
+        return bookRepo.existsByName(bookName);
     }
 
     public boolean isBookAvailable(String bookName) {
         if (!isBookInStore(bookName)) {
             throw new BookNotInStoreException();
         }
-        return bookRepo.existsByNameIgnoreCaseAndIsAvailableTrue(bookName);
+        return bookRepo.existsByNameAndIsAvailableTrue(bookName);
     }
 
     public boolean isAuthorInStore(String author) {
-        return bookRepo.existsByAuthorIgnoreCase(author);
+        return bookRepo.existsByAuthor(author);
     }
 
     public Book findById(String bookId) {
@@ -106,7 +106,7 @@ public class BookService {
             throw new BookNotInStoreException();
         }
 
-        return bookRepo.findByNameIgnoreCase(bookName).stream()
+        return bookRepo.findByName(bookName).stream()
                 .filter(Book::isAvailable)
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("book not free"));
@@ -121,7 +121,6 @@ public class BookService {
 
             while ((oneLine = br.readLine()) != null) {
                 book = bookMaker(oneLine);
-
                 if (bookRepo.existsById(book.getId())) continue;
                 bookRepo.save(book);
             }
@@ -133,8 +132,8 @@ public class BookService {
     private Book bookMaker(String bookAsString){
         String[] splitLine = bookAsString.split("/");
         String id = splitLine[0];
-        String name = splitLine[1];
-        String author = splitLine[2];
+        String name = splitLine[1].toLowerCase();       // book name in lower case
+        String author = splitLine[2].toLowerCase();     // author in lower case
 
         return new Book(id, name, author);
     }

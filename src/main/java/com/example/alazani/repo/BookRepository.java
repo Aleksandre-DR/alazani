@@ -12,17 +12,17 @@ import java.util.List;
 @Repository
 public interface BookRepository extends CrudRepository<Book, String> {
 
-    boolean existsByNameIgnoreCase(String name);
+    boolean existsByName(String name);
 
-    List<Book> findByNameIgnoreCase(String name);
+    List<Book> findByName(String name);
 
-    boolean existsByNameIgnoreCaseAndIsAvailableTrue(String name);
+    boolean existsByNameAndIsAvailableTrue(String name);
 
-    List<Book> findByAuthorIgnoreCase(String author);
+    List<Book> findByAuthor(String author);
 
-    long countByNameIgnoreCase(String name);
+    long countByName(String name);
 
-    boolean existsByAuthorIgnoreCase(String author);
+    boolean existsByAuthor(String author);
 
     @NullMarked
     List<Book> findAll();

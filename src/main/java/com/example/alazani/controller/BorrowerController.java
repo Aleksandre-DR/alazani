@@ -18,8 +18,6 @@ public class BorrowerController {
         this.borrowerService = borrowerService;
     }
 
-    private static final String idNotEmpty = "borrower id can not be empty";
-
     @GetMapping("/all")
     private ResponseEntity<List<Borrower>> findAllBorrowers() {
         List<Borrower> borrowers = borrowerService.findAllBorrowers();
@@ -33,13 +31,17 @@ public class BorrowerController {
     }
 
     @PostMapping("/delete")
-    public ResponseEntity<String> deleteFromTable(@RequestParam @NotBlank(message = idNotEmpty) String borrowerId) {
+    public ResponseEntity<String> deleteFromTable(@RequestParam String borrowerId) {
+        ControllerParameterChecker.checkBorrowerId(borrowerId);
+
         borrowerService.deleteFromTable(borrowerId);
         return ResponseEntity.ok("deleted successfully");
     }
 
     @GetMapping("/get")
-    public ResponseEntity<Borrower> findById(@RequestParam @NotBlank(message = idNotEmpty) String borrowerId) {
+    public ResponseEntity<Borrower> findById(@RequestParam String borrowerId) {
+        ControllerParameterChecker.checkBorrowerId(borrowerId);
+
         Borrower borrower = borrowerService.findById(borrowerId);
         return ResponseEntity.ok(borrower);
     }

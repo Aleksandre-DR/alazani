@@ -17,11 +17,10 @@ public class BlackListController {
         this.blackListService = blackListService;
     }
 
-    private static final String bookIdNotEmpty = "book id can not be empty";
-    private static final String borrowerIdNotEmpty = "borrower id can not be empty";
-
     @PostMapping("delete")
-    public ResponseEntity<String> deleteFromTable(@RequestParam @NotEmpty(message = bookIdNotEmpty) String bookId) {
+    public ResponseEntity<String> deleteFromTable(@RequestParam String bookId) {
+        ControllerParameterChecker.checkBookId(bookId);
+
         blackListService.deleteFromTable(bookId);
         return ResponseEntity.ok("deleted successfully");
     }
@@ -33,7 +32,9 @@ public class BlackListController {
     }
 
     @GetMapping("all-by")
-    public ResponseEntity<List<BlackList>> findAllBy(@RequestParam @NotEmpty(message = borrowerIdNotEmpty) String borrowerId) {
+    public ResponseEntity<List<BlackList>> findAllBy(@RequestParam String borrowerId) {
+        ControllerParameterChecker.checkBorrowerId(borrowerId);
+
         List<BlackList> blackListers = blackListService.findAllByBorrowerId(borrowerId);
         return ResponseEntity.ok(blackListers);
     }

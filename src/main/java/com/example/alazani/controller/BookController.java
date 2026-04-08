@@ -18,10 +18,6 @@ public class BookController {
         this.bookService = bookService;
     }
 
-    private static final String bookNameNotEmpty = "book name can not be empty";
-    private static final String bookIdNotEmpty = "book id can not be empty";
-    private static final String authorNotEmpty = "author name can not be empty";
-
     @GetMapping("/all")
     public ResponseEntity<List<Book>> findAll() {
         List<Book> books = bookService.findAll();
@@ -29,7 +25,9 @@ public class BookController {
     }
 
     @GetMapping("/all-by")
-    public ResponseEntity<List<Book>> findAllBy(@RequestParam @NotBlank(message = authorNotEmpty) String author) {
+    public ResponseEntity<List<Book>> findAllBy(@RequestParam String author) {
+        ControllerParameterChecker.checkAuthor(author);
+
         List<Book> books = bookService.findAllBy(author);
         return ResponseEntity.ok(books);
     }
@@ -41,13 +39,17 @@ public class BookController {
     }
 
     @GetMapping("/distincts-by")
-    public ResponseEntity<List<String>> findDistinctsBy(@RequestParam @NotBlank(message = authorNotEmpty) String author) {
+    public ResponseEntity<List<String>> findDistinctsBy(@RequestParam String author) {
+        ControllerParameterChecker.checkAuthor(author);
+
         List<String> bookNames = bookService.findDistinctsBy(author);
         return ResponseEntity.ok(bookNames);
     }
 
     @GetMapping("/amount-of")
-    public ResponseEntity<Long> numberOfBook(@RequestParam @NotBlank(message = bookNameNotEmpty) String bookName) {
+    public ResponseEntity<Long> numberOfBook(@RequestParam String bookName) {
+        ControllerParameterChecker.checkBookName(bookName);
+
         long numberOfBook = bookService.numberOfBook(bookName);
         return ResponseEntity.ok(numberOfBook);
     }
@@ -59,25 +61,33 @@ public class BookController {
     }
 
     @GetMapping("/free-distincts-by")
-    public ResponseEntity<List<String>> findDistinctAvailablesBy(@RequestParam @NotBlank(message = authorNotEmpty) String author) {
+    public ResponseEntity<List<String>> findDistinctAvailablesBy(@RequestParam String author) {
+        ControllerParameterChecker.checkAuthor(author);
+
         List<String> bookNames = bookService.findDistinctAvailablesBy(author);
         return ResponseEntity.ok(bookNames);
     }
 
     @GetMapping("/exists")
-    public ResponseEntity<Boolean> isBookIsStore(@RequestParam @NotBlank(message = bookNameNotEmpty) String bookName) {
+    public ResponseEntity<Boolean> isBookIsStore(@RequestParam String bookName) {
+        ControllerParameterChecker.checkBookName(bookName);
+
         boolean isBookInStore = bookService.isBookInStore(bookName);
         return ResponseEntity.ok(isBookInStore);
     }
 
     @GetMapping("/is-available")
-    public ResponseEntity<Boolean> isBookAvailable(@RequestParam @NotBlank(message = bookNameNotEmpty) String bookName) {
+    public ResponseEntity<Boolean> isBookAvailable(@RequestParam String bookName) {
+        ControllerParameterChecker.checkBookName(bookName);
+
         boolean isAvailable = bookService.isBookAvailable(bookName);
         return ResponseEntity.ok(isAvailable);
     }
 
     @GetMapping("/exists-author")
-    public ResponseEntity<Boolean> isAuthorIsStore(@RequestParam @NotBlank(message = authorNotEmpty) String author) {
+    public ResponseEntity<Boolean> isAuthorIsStore(@RequestParam String author) {
+        ControllerParameterChecker.checkAuthor(author);
+
         boolean isAuthorInStore = bookService.isAuthorInStore(author);
         return ResponseEntity.ok(isAuthorInStore);
     }
@@ -89,7 +99,9 @@ public class BookController {
     }
 
     @PostMapping("delete")
-    public ResponseEntity<String> deleteFromTable(@RequestParam @NotBlank(message = bookIdNotEmpty) String bookId) {
+    public ResponseEntity<String> deleteFromTable(@RequestParam String bookId) {
+        ControllerParameterChecker.checkBookId(bookId);
+
         bookService.deleteFromTable(bookId);
         return ResponseEntity.ok("deleted successfully");
     }

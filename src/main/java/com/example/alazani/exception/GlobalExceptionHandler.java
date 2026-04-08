@@ -27,16 +27,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(status).body(error);
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)      // @RequestBody error
-    public ResponseEntity<ErrorResponse> methodArgNotValid(MethodArgumentNotValidException ex) {
-        String message = getValidationExceptionMessage(ex);
+    @ExceptionHandler(ParameterAbsentException.class)
+    public ResponseEntity<ErrorResponse> invalidParameter(ParameterAbsentException ex) {
+        int status = HttpStatus.BAD_REQUEST.value();
 
-        ErrorResponse error = new ErrorResponse(message);
-        return ResponseEntity.badRequest().body(error);
+        ErrorResponse error = new ErrorResponse(ex.getMessage());
+        return ResponseEntity.status(status).body(error);
     }
 
-    @ExceptionHandler(HandlerMethodValidationException.class)     // @RequestParam error
-    public ResponseEntity<ErrorResponse> handlerMethodNotValid(HandlerMethodValidationException ex) {
+    @ExceptionHandler(MethodArgumentNotValidException.class)      // @RequestBody error
+    public ResponseEntity<ErrorResponse> methodArgNotValid(MethodArgumentNotValidException ex) {
         String message = getValidationExceptionMessage(ex);
 
         ErrorResponse error = new ErrorResponse(message);
@@ -53,13 +53,6 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> undefinedException(Exception ex) {
         ErrorResponse error = new ErrorResponse(ex.getMessage());
         return ResponseEntity.internalServerError().body(error);
-    }
-
-    private String getValidationExceptionMessage(HandlerMethodValidationException ex) {
-        return ex.getAllErrors().stream()
-                .map(MessageSourceResolvable::getDefaultMessage)
-                .findFirst()
-                .orElse("undefined validation error");
     }
 
     private String getValidationExceptionMessage(MethodArgumentNotValidException ex) {

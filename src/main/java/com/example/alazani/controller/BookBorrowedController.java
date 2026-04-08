@@ -22,10 +22,6 @@ public class BookBorrowedController {
         this.bookBorrowedService = bookBorrowedService;
     }
 
-    private static final String bookIdNotEmpty = "book id can not be empty";
-    private static final String borrowerIdNotEmpty = "borrower id can not be empty";
-
-
     @GetMapping("/all")
     public ResponseEntity<List<BookBorrowed>> findAllBorrowings() {
         List<BookBorrowed> borrowings = bookBorrowedService.findAllBorrowings();
@@ -45,7 +41,9 @@ public class BookBorrowedController {
     }
 
     @PostMapping("/delete")
-    public ResponseEntity<String> deleteFromTable(@RequestParam @NotBlank(message = bookIdNotEmpty) String bookId) {
+    public ResponseEntity<String> deleteFromTable(@RequestParam String bookId) {
+        ControllerParameterChecker.checkBookId(bookId);
+
         bookBorrowedService.deleteFromTable(bookId);
         return ResponseEntity.ok("deleted successfully");
     }
@@ -57,13 +55,17 @@ public class BookBorrowedController {
     }
 
     @GetMapping("/books-borrowed-by")
-    public ResponseEntity<List<Book>> booksBorrowedBy(@RequestParam @NotBlank(message = borrowerIdNotEmpty) String borrowerId) {
+    public ResponseEntity<List<Book>> booksBorrowedBy(@RequestParam String borrowerId) {
+        ControllerParameterChecker.checkBorrowerId(borrowerId);
+
         List<Book> books = bookBorrowedService.booksBorrowedBy(borrowerId);
         return ResponseEntity.ok(books);
     }
 
     @GetMapping("/borrow-date")
-    public ResponseEntity<LocalDate> bookBorrowDate(@RequestParam @NotBlank(message = bookIdNotEmpty) String bookId) {
+    public ResponseEntity<LocalDate> bookBorrowDate(@RequestParam String bookId) {
+        ControllerParameterChecker.checkBookId(bookId);
+
         LocalDate borrowDate = bookBorrowedService.bookBorrowDate(bookId);
         return ResponseEntity.ok(borrowDate);
     }
