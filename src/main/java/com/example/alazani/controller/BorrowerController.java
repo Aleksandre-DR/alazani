@@ -3,7 +3,6 @@ package com.example.alazani.controller;
 import com.example.alazani.entity.Borrower;
 import com.example.alazani.service.BorrowerService;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

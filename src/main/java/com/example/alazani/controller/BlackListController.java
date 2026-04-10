@@ -2,7 +2,6 @@ package com.example.alazani.controller;
 
 import com.example.alazani.entity.BlackList;
 import com.example.alazani.service.BlackListService;
-import jakarta.validation.constraints.NotEmpty;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

@@ -2,7 +2,6 @@ package com.example.alazani.controller;
 
 import com.example.alazani.entity.Book;
 import com.example.alazani.service.BookService;
-import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -35,7 +34,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(status).body(error);
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)      // @RequestBody error
+    @ExceptionHandler(MethodArgumentNotValidException.class) // @RequestBody error
     public ResponseEntity<ErrorResponse> methodArgNotValid(MethodArgumentNotValidException ex) {
         String message = getValidationExceptionMessage(ex);
 

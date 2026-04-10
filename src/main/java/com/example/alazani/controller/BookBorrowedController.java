@@ -6,7 +6,6 @@ import com.example.alazani.entity.Book;
 import com.example.alazani.entity.BookBorrowed;
 import com.example.alazani.service.BookBorrowerService.BookBorrowedService;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
