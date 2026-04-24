@@ -26,9 +26,7 @@ public class BookService {
     }
 
     public List<Book> findAllBy(String author) {
-        if (!isAuthorInStore(author)) {
-            throw new AuthorNotInStoreException();
-        }
+        throwIfAuthorNotInStore(author);
         return bookRepo.findByAuthor(author);
     }
 
@@ -40,9 +38,7 @@ public class BookService {
     }
 
     public List<String> findDistinctsBy(String author) {
-        if (!isAuthorInStore(author)) {
-            throw new AuthorNotInStoreException();
-        }
+        throwIfAuthorNotInStore(author);
 
         return bookRepo.findByAuthor(author).stream()
                 .map(Book::getName)
@@ -51,9 +47,7 @@ public class BookService {
     }
 
     public long numberOfBook(String bookName) {
-        if (!isBookInStore(bookName)) {
-            throw new BookNotInStoreException();
-        }
+        throwIfBookNameNotInStore(bookName);
         return bookRepo.countByName(bookName);
     }
 
@@ -66,9 +60,8 @@ public class BookService {
     }
 
     public List<String> findDistinctAvailablesBy(String author) {
-        if (!isAuthorInStore(author)) {
-            throw new AuthorNotInStoreException();
-        }
+        throwIfAuthorNotInStore(author);
+
         return bookRepo.findByAuthor(author).stream()
                 .filter(Book::isAvailable)
                 .map(Book::getName)
@@ -81,9 +74,7 @@ public class BookService {
     }
 
     public boolean isBookAvailable(String bookName) {
-        if (!isBookInStore(bookName)) {
-            throw new BookNotInStoreException();
-        }
+        throwIfBookNameNotInStore(bookName);
         return bookRepo.existsByNameAndIsAvailableTrue(bookName);
     }
 
@@ -97,14 +88,19 @@ public class BookService {
     }
 
     @Transactional           // because this is update-delete query call
-    public void setAvailabilityOf(String bookId, boolean isAvailable) {
-        bookRepo.setAvailabilityOf(bookId, isAvailable);
+    public void setAvailabilityTrue(String bookId) {
+        throwIfBookIdNotInStore(bookId);
+        bookRepo.setAvailabilityOf(bookId, true);
+    }
+
+    @Transactional           // because this is update-delete query call
+    public void setAvailabilityFalse(String bookId) {
+        throwIfBookIdNotInStore(bookId);
+        bookRepo.setAvailabilityOf(bookId, false);
     }
 
     public Book findAvailableByName(String bookName) {
-        if (!isBookInStore(bookName)) {
-            throw new BookNotInStoreException();
-        }
+        throwIfBookNameNotInStore(bookName);
 
         return bookRepo.findByName(bookName).stream()
                 .filter(Book::isAvailable)
@@ -125,7 +121,7 @@ public class BookService {
                 bookRepo.save(book);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException("file reading exception");
         }
     }
 
@@ -139,13 +135,29 @@ public class BookService {
     }
 
     public void deleteFromTable(String bookId) {
-        if (!bookRepo.existsById(bookId)) {
-            throw new BookNotInStoreException();
-        }
+        throwIfBookIdNotInStore(bookId);
         bookRepo.deleteById(bookId);
     }
 
     public void deleteAllFromTable() {
         bookRepo.deleteAll();
+    }
+
+    private void throwIfBookIdNotInStore(String bookId){
+        if (!bookRepo.existsById(bookId)) {
+            throw new BookNotInStoreException();
+        }
+    }
+
+    private void throwIfBookNameNotInStore(String bookName){
+        if (!bookRepo.existsByName(bookName)) {
+            throw new BookNotInStoreException();
+        }
+    }
+
+    private void throwIfAuthorNotInStore(String author){
+        if (!bookRepo.existsByAuthor(author)) {
+            throw new AuthorNotInStoreException();
+        }
     }
 }

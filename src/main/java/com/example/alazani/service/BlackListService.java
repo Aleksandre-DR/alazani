@@ -2,6 +2,7 @@ package com.example.alazani.service;
 
 import com.example.alazani.entity.BlackList;
 import com.example.alazani.repo.BlackListRepository;
+import com.example.alazani.service.BookBorrowerService.BookBorrowedService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -11,10 +12,14 @@ import java.util.List;
 public class BlackListService {
     private final BlackListRepository blackListRepo;
     private final BookService bookService;
+    private final BookBorrowedService bookBorrowedService;
 
-    public BlackListService(BlackListRepository blackListRepo, BookService bookService) {
+    public BlackListService(BlackListRepository blackListRepo,
+                            BookService bookService,
+                            BookBorrowedService bookBorrowedService) {
         this.blackListRepo = blackListRepo;
         this.bookService = bookService;
+        this.bookBorrowedService = bookBorrowedService;
     }
 
     public boolean existsByBorrowerId(String borrowerId) {
@@ -32,7 +37,8 @@ public class BlackListService {
             throw new RuntimeException("book not in black list");
         }
         blackListRepo.deleteById(bookId);
-        bookService.setAvailabilityOf(bookId, true);   // after returning, book got free
+        bookBorrowedService.deleteFromTable(bookId);    // deleting from borrowing table
+        bookService.setAvailabilityTrue(bookId);   // after returning, book got free
     }
 
     public List<BlackList> findAll() {

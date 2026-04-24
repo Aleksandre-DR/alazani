@@ -4,8 +4,8 @@ import com.example.alazani.dto.CompressedBorrow;
 import com.example.alazani.entity.Book;
 import com.example.alazani.entity.BookBorrowed;
 import com.example.alazani.entity.Borrower;
+import com.example.alazani.repo.BlackListRepository;
 import com.example.alazani.repo.BookBorrowedRepository;
-import com.example.alazani.service.BlackListService;
 import com.example.alazani.service.BookService;
 import com.example.alazani.service.BorrowerService;
 import org.springframework.stereotype.Service;
@@ -20,15 +20,16 @@ public class BookBorrowedService {
     private final BookBorrowedRepository bookBorrowedRepo;
     private final BookService bookService;
     private final BorrowerService borrowerService;
-    private final BlackListService blackListService;
+    private final BlackListRepository blackListRepo;
 
     public BookBorrowedService(BookBorrowedRepository booksBorrowedRepo,
-                               BookService bookService, BorrowerService borrowerService,
-                               BlackListService blackListService) {
+                               BookService bookService,
+                               BorrowerService borrowerService,
+                               BlackListRepository blackListRepo) {
         this.bookBorrowedRepo = booksBorrowedRepo;
         this.bookService = bookService;
         this.borrowerService = borrowerService;
-        this.blackListService = blackListService;
+        this.blackListRepo = blackListRepo;    // service DI causes circular dependency
     }
 
     public List<BookBorrowed> findAllBorrowings() {
@@ -54,13 +55,13 @@ public class BookBorrowedService {
     public void saveToTable(String bookName, String borrowerId) {
         Book book = bookService.findAvailableByName(bookName);
         Borrower borrower = borrowerService.findById(borrowerId);
-        if (blackListService.existsByBorrowerId(borrowerId)) {
+        if (blackListRepo.existsByBorrowerId(borrowerId)) {
             throw new RuntimeException("borrower in black list, borrowing rejected");
         }
 
         BookBorrowed bookBorrowed = new BookBorrowed(book, borrower);
-        bookBorrowedRepo.save(bookBorrowed);              // written in BookBorrowed table
-        bookService.setAvailabilityOf(book.getId(), false);       // book got borrowed
+        bookBorrowedRepo.save(bookBorrowed);          // written in BookBorrowed table
+        bookService.setAvailabilityFalse(book.getId());       // book got borrowed
     }
 
     public void deleteFromTable(String bookId) {
@@ -70,12 +71,12 @@ public class BookBorrowedService {
         }
 
         bookBorrowedRepo.deleteByBook(book);
-        bookService.setAvailabilityOf(bookId, true);        // book got free
+        bookService.setAvailabilityTrue(bookId);        // book got free
     }
 
     public void deleteAll() {
         bookBorrowedRepo.deleteAll();
-        bookService.findAll().forEach(b -> bookService.setAvailabilityOf(b.getId(), true));
+        bookService.findAll().forEach(b -> bookService.setAvailabilityTrue(b.getId()));
     }
 
     public List<Book> booksBorrowedBy(String borrowerId) {
