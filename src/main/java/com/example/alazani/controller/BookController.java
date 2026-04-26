@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/book")
+@RequestMapping(path = "/book", produces = "application/json")
 public class BookController {
 
     private final BookService bookService;
@@ -18,96 +18,80 @@ public class BookController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<Book>> findAll() {
-        List<Book> books = bookService.findAll();
-        return ResponseEntity.ok(books);
+    public List<Book> findAll() {
+        return bookService.findAll();
     }
 
     @GetMapping("/all-by")
-    public ResponseEntity<List<Book>> findAllBy(@RequestParam String author) {
+    public List<Book> findAllBy(@RequestParam String author) {
         ControllerParameterChecker.checkAuthor(author);
-
-        List<Book> books = bookService.findAllBy(author);
-        return ResponseEntity.ok(books);
+        return bookService.findAllBy(author);
     }
 
     @GetMapping("/distincts")
-    public ResponseEntity<List<String>> findDistincts() {
+    public List<String> findDistincts() {
         List<String> bookNames = bookService.findDistincts();
-        return ResponseEntity.ok(bookNames);
+        return bookNames;
     }
 
     @GetMapping("/distincts-by")
-    public ResponseEntity<List<String>> findDistinctsBy(@RequestParam String author) {
+    public List<String> findDistinctsBy(@RequestParam String author) {
         ControllerParameterChecker.checkAuthor(author);
-
-        List<String> bookNames = bookService.findDistinctsBy(author);
-        return ResponseEntity.ok(bookNames);
+        return bookService.findDistinctsBy(author);
     }
 
     @GetMapping("/amount-of")
-    public ResponseEntity<Long> numberOfBook(@RequestParam String bookName) {
+    public long numberOfBook(@RequestParam String bookName) {
         ControllerParameterChecker.checkBookName(bookName);
-
-        long numberOfBook = bookService.numberOfBook(bookName);
-        return ResponseEntity.ok(numberOfBook);
+        return bookService.numberOfBook(bookName);
     }
 
     @GetMapping("/free-distincts")
-    public ResponseEntity<List<String>> findDistinctAvailables() {
-        List<String> bookNames = bookService.findDistinctAvailables();
-        return ResponseEntity.ok(bookNames);
+    public List<String> findDistinctAvailables() {
+        return bookService.findDistinctAvailables();
     }
 
     @GetMapping("/free-distincts-by")
-    public ResponseEntity<List<String>> findDistinctAvailablesBy(@RequestParam String author) {
+    public List<String> findDistinctAvailablesBy(@RequestParam String author) {
         ControllerParameterChecker.checkAuthor(author);
-
-        List<String> bookNames = bookService.findDistinctAvailablesBy(author);
-        return ResponseEntity.ok(bookNames);
+        return bookService.findDistinctAvailablesBy(author);
     }
 
     @GetMapping("/exists")
-    public ResponseEntity<Boolean> isBookIsStore(@RequestParam String bookName) {
+    public boolean isBookIsStore(@RequestParam String bookName) {
         ControllerParameterChecker.checkBookName(bookName);
-
-        boolean isBookInStore = bookService.isBookInStore(bookName);
-        return ResponseEntity.ok(isBookInStore);
+        return bookService.isBookInStore(bookName);
     }
 
     @GetMapping("/is-available")
-    public ResponseEntity<Boolean> isBookAvailable(@RequestParam String bookName) {
+    public boolean isBookAvailable(@RequestParam String bookName) {
         ControllerParameterChecker.checkBookName(bookName);
-
-        boolean isAvailable = bookService.isBookAvailable(bookName);
-        return ResponseEntity.ok(isAvailable);
+        return bookService.isBookAvailable(bookName);
     }
 
     @GetMapping("/exists-author")
-    public ResponseEntity<Boolean> isAuthorIsStore(@RequestParam String author) {
+    public boolean isAuthorIsStore(@RequestParam String author) {
         ControllerParameterChecker.checkAuthor(author);
-
-        boolean isAuthorInStore = bookService.isAuthorInStore(author);
-        return ResponseEntity.ok(isAuthorInStore);
+        return bookService.isAuthorInStore(author);
     }
 
     @PostMapping("/fill-table")
-    public ResponseEntity<String> fillTable() {
+    public String fillTable() {
         bookService.fillTable();
-        return ResponseEntity.ok("filled successfully");
+        return "filled successfully";
     }
 
     @PostMapping("delete")
-    public ResponseEntity<String> deleteFromTable(@RequestParam String bookId) {
+    public String deleteFromTable(@RequestParam String bookId) {
         ControllerParameterChecker.checkBookId(bookId);
 
         bookService.deleteFromTable(bookId);
-        return ResponseEntity.ok("deleted successfully");
+        return "deleted successfully";
     }
 
     @PostMapping("delete-all")
-    public ResponseEntity<String> deleteAllFromTable() {
+    public String deleteAllFromTable() {
         bookService.deleteAllFromTable();
-        return ResponseEntity.ok("deleted successfully");
+        return "deleted successfully";
     }
 }

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/borrower")
+@RequestMapping(path = "/borrower", produces = "application/json")
 public class BorrowerController {
     private final BorrowerService borrowerService;
 
@@ -18,30 +18,27 @@ public class BorrowerController {
     }
 
     @GetMapping("/all")
-    private ResponseEntity<List<Borrower>> findAllBorrowers() {
-        List<Borrower> borrowers = borrowerService.findAllBorrowers();
-        return ResponseEntity.ok(borrowers);
+    private List<Borrower> findAllBorrowers() {
+        return borrowerService.findAllBorrowers();
     }
 
     @PostMapping("/add")
-    public ResponseEntity<String> addToTable(@RequestBody @Valid Borrower borrower) {
+    public String addToTable(@RequestBody @Valid Borrower borrower) {
         borrowerService.addToTable(borrower);
-        return ResponseEntity.ok("added successfully");
+        return "added successfully";
     }
 
     @PostMapping("/delete")
-    public ResponseEntity<String> deleteFromTable(@RequestParam String borrowerId) {
+    public String deleteFromTable(@RequestParam String borrowerId) {
         ControllerParameterChecker.checkBorrowerId(borrowerId);
 
         borrowerService.deleteFromTable(borrowerId);
-        return ResponseEntity.ok("deleted successfully");
+        return "deleted successfully";
     }
 
     @GetMapping("/get")
-    public ResponseEntity<Borrower> findById(@RequestParam String borrowerId) {
+    public Borrower findById(@RequestParam String borrowerId) {
         ControllerParameterChecker.checkBorrowerId(borrowerId);
-
-        Borrower borrower = borrowerService.findById(borrowerId);
-        return ResponseEntity.ok(borrower);
+        return borrowerService.findById(borrowerId);
     }
 }

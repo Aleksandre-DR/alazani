@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/blacklist")
+@RequestMapping(path = "/blacklist", produces = "application/json")
 public class BlackListController {
     private final BlackListService blackListService;
 
@@ -17,24 +17,21 @@ public class BlackListController {
     }
 
     @PostMapping("delete")
-    public ResponseEntity<String> deleteFromTable(@RequestParam String bookId) {
+    public String deleteFromTable(@RequestParam String bookId) {
         ControllerParameterChecker.checkBookId(bookId);
 
         blackListService.deleteFromTable(bookId);
-        return ResponseEntity.ok("deleted successfully");
+        return "deleted successfully";
     }
 
     @GetMapping("all")
-    public ResponseEntity<List<BlackList>> findAll() {
-        List<BlackList> blackListers = blackListService.findAll();
-        return ResponseEntity.ok(blackListers);
+    public List<BlackList> findAll() {
+        return blackListService.findAll();          // all blacklisters
     }
 
     @GetMapping("all-by")
-    public ResponseEntity<List<BlackList>> findAllBy(@RequestParam String borrowerId) {
+    public List<BlackList> findAllBy(@RequestParam String borrowerId) {
         ControllerParameterChecker.checkBorrowerId(borrowerId);
-
-        List<BlackList> blackListers = blackListService.findAllByBorrowerId(borrowerId);
-        return ResponseEntity.ok(blackListers);
+        return blackListService.findAllByBorrowerId(borrowerId);
     }
 }
